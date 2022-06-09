@@ -1,0 +1,710 @@
+{
+	"id": "ca58cb17df2e1f5dcb163aef5c616f94",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.7",
+	"solcLongVersion": "0.8.7+commit.e28d00a7",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"contracts/RPS.sol": {
+				"content": "// //SPDX-License-Identifier: MIT\npragma solidity ^0.8.7;\n\ncontract RPS {\n    //     constructor() payable {} // 해당 컨트렉트는 송금이 가능함을 명시\n\n    //     // 가위, 바위, 보 값에 대한 enum\n    //     enum Hand {\n    //         rock, // 바위\n    //         paper, // 보\n    //         scissors // 가위\n    //     }\n\n    //     // 플레이어의 상태 (enum은 각 순서에 따라 0,1,2...로 초기값이 정해진다.)\n    //     enum PlayerStatus {\n    //         STATUS_WIN, // 게임을 이김\n    //         STATUS_LOSE, // 게임을 짐\n    //         STATUS_TIE, // 게임 비김\n    //         STATUS_PENDING // 게임 대기중\n    //     }\n\n    //     // 게임 방의 상태\n    //     enum GameStatus {\n    //         STATUS_NOT_STARTED, // 시작하지 않은 상태\n    //         STATUS_STARTED, // 시작한 상태\n    //         STATUS_COMPLETE, // 게임이 끝난 상태\n    //         STATUS_ERROR // 게임이 에러난 상태\n    //     }\n    //     struct Player {\n    //         // 참여한 플레이어의 주소와 베팅금액, 낸 값, 현재 상태를 알기 위한 구조체\n    //         address payable addr; // 주소\n    //         uint256 playerBetAmount; // 베팅 금액\n    //         Hand hand; // 참여자의 손 상태\n    //         PlayerStatus playerStatus; // 플레이어의 상태\n    //     }\n\n    //     struct Game {\n    //         Player originator; //  방장의 정보\n    //         Player taker; // 참여자 정보\n    //         uint256 betAmount; // 총 베팅 금액\n    //         GameStatus gameStatus; // 게임의 현 상태\n    //     }\n\n    //     mapping(uint256 => Game) rooms; //Game 구조체 형식으로 각 방을 만들기 위함\n    //     uint256 roomLen = 0; // rooms의 키 값, 방이 생성될 때마다 1씩 올라감.\n\n    //     function createRoom(Hand _hand)\n    //         public\n    //         payable\n    //         isValidHand(_hand)\n    //         returns (uint256 roomNum)\n    //     {\n    //         // 베팅 금액을 입금하기 때문에 payable 키워드 사용\n    //         // 생성한 방의 번호를 반환\n    //         rooms[roomLen] = Game({\n    //             betAmount: msg.value,\n    //             gameStatus: GameStatus.STATUS_STARTED,\n    //             originator: Player({\n    //                 hand: _hand,\n    //                 addr: payable(msg.sender),\n    //                 playerStatus: PlayerStatus.STATUS_PENDING,\n    //                 playerBetAmount: msg.value\n    //             }),\n    //             taker: Player({\n    //                 hand: Hand.rock,\n    //                 addr: payable(msg.sender),\n    //                 playerStatus: PlayerStatus.STATUS_PENDING,\n    //                 playerBetAmount: 0\n    //             })\n    //         });\n    //         roomNum = roomLen; // 현재 방 번호를 할당\n    //         roomLen = roomLen + 1; // 다음 새롭게 만들어질 방을 위해 1 올려준다.\n    //         return roomNum;\n    //     }\n\n    //     modifier isValidHand(Hand _hand) {\n    //         require(\n    //             (_hand == Hand.rock) ||\n    //                 (_hand == Hand.paper) ||\n    //                 (_hand == Hand.scissors)\n    //         );\n    //         _;\n    //     }\n\n    //     function joinRoom(uint256 _roomNum, Hand _hand)\n    //         public\n    //         payable\n    //         isValidHand(_hand)\n    //     {\n    //         // 해당 게임의 참여자 정보\n    //         rooms[_roomNum].taker = Player({\n    //             hand: _hand,\n    //             addr: payable(msg.sender),\n    //             playerStatus: PlayerStatus.STATUS_PENDING,\n    //             playerBetAmount: msg.value\n    //         });\n    //         rooms[_roomNum].betAmount = rooms[_roomNum].betAmount + msg.value;\n    //         compareHands(_roomNum); //  게임 결과 업데이트 함수\n    //     }\n\n    //     function compareHands(uint256 _roomNum) private {\n    //         uint8 originator = uint8(rooms[_roomNum].originator.hand);\n    //         uint8 taker = uint8(rooms[_roomNum].taker.hand);\n\n    //         // 게임 상태를 시작으로 변경\n    //         rooms[_roomNum].gameStatus = GameStatus.STATUS_STARTED;\n\n    //         if (taker == originator) {\n    //             // 비긴 경우\n    //             rooms[_roomNum].originator.playerStatus = PlayerStatus.STATUS_TIE;\n    //             rooms[_roomNum].taker.playerStatus = PlayerStatus.STATUS_TIE;\n    //         } else if ((taker + 1) % 3 == originator) {\n    //             // 방장이 이긴 경우\n    //             rooms[_roomNum].originator.playerStatus = PlayerStatus.STATUS_WIN;\n    //             rooms[_roomNum].taker.playerStatus = PlayerStatus.STATUS_LOSE;\n    //         } else if ((taker + 1) % 3 == taker) {\n    //             // 참가자가 이긴 경우\n    //             rooms[_roomNum].originator.playerStatus = PlayerStatus.STATUS_LOSE;\n    //             rooms[_roomNum].taker.playerStatus = PlayerStatus.STATUS_WIN;\n    //         } else {\n    //             // 그 외의 상황은 에러\n    //             rooms[_roomNum].gameStatus = GameStatus.STATUS_ERROR;\n    //         }\n    //     }\n\n    //     // 비긴 경우에는 베팅금액을 돌려받고, 이긴 경우에는 전체 베팅 금액을 돌려 받습니다.\n    //     function payout(uint256 _roomNum)\n    //         public\n    //         payable\n    //         isPlayer(_roomNum, msg.sender)\n    //     {\n    //         if (\n    //             // 비긴 경우\n    //             rooms[_roomNum].originator.playerStatus ==\n    //             PlayerStatus.STATUS_TIE &&\n    //             rooms[_roomNum].taker.playerStatus == PlayerStatus.STATUS_TIE\n    //         ) {\n    //             rooms[_roomNum].originator.addr.transfer(\n    //                 rooms[_roomNum].originator.playerBetAmount\n    //             );\n    //             rooms[_roomNum].taker.addr.transfer(\n    //                 rooms[_roomNum].taker.playerBetAmount\n    //             );\n    //         } else {\n    //             //  누군가 이긴경우\n    //             if (\n    //                 rooms[_roomNum].originator.playerStatus ==\n    //                 PlayerStatus.STATUS_WIN\n    //             ) {\n    //                 // 방장이 이긴 경우\n    //                 rooms[_roomNum].originator.addr.transfer(\n    //                     rooms[_roomNum].betAmount\n    //                 );\n    //             } else if (\n    //                 rooms[_roomNum].taker.playerStatus == PlayerStatus.STATUS_WIN\n    //             ) {\n    //                 // 참여자가 이긴 경우\n    //                 rooms[_roomNum].taker.addr.transfer(rooms[_roomNum].betAmount);\n    //             } else {\n    //                 // 아무도 이기지 않은 경우\n    //                 rooms[_roomNum].originator.addr.transfer(\n    //                     rooms[_roomNum].originator.playerBetAmount\n    //                 );\n    //                 rooms[_roomNum].taker.addr.transfer(\n    //                     rooms[_roomNum].taker.playerBetAmount\n    //                 );\n    //             }\n    //             rooms[_roomNum].gameStatus = GameStatus.STATUS_COMPLETE; // 종료 되었으므로 게임 상태 변경\n    //         }\n    //     }\n\n    //     modifier isPlayer(uint256 _roomNum, address _sender) {\n    //         require(\n    //             _sender == rooms[_roomNum].originator.addr ||\n    //                 _sender == rooms[_roomNum].taker.addr\n    //         );\n    //         _;\n    //     }\n    //     // 가스비 절약\n    //     // 초기값 확인 - Enum의 초기값은 무엇이 들어갈까\n    //     // modifier 함수에 대한 설명 추가\n    //     // msg.sender, msg.value\n\n    function hash() public {\n        keccak256(\"hello world\");\n    }\n}\n"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			}
+		}
+	},
+	"output": {
+		"contracts": {
+			"contracts/RPS.sol": {
+				"RPS": {
+					"abi": [
+						{
+							"inputs": [],
+							"name": "hash",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						}
+					],
+					"devdoc": {
+						"kind": "dev",
+						"methods": {},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "    /* \"contracts/RPS.sol\":59:7864  contract RPS {... */\n  mstore(0x40, 0x80)\n  callvalue\n  dup1\n  iszero\n  tag_1\n  jumpi\n  0x00\n  dup1\n  revert\ntag_1:\n  pop\n  dataSize(sub_0)\n  dup1\n  dataOffset(sub_0)\n  0x00\n  codecopy\n  0x00\n  return\nstop\n\nsub_0: assembly {\n        /* \"contracts/RPS.sol\":59:7864  contract RPS {... */\n      mstore(0x40, 0x80)\n      callvalue\n      dup1\n      iszero\n      tag_1\n      jumpi\n      0x00\n      dup1\n      revert\n    tag_1:\n      pop\n      jumpi(tag_2, lt(calldatasize, 0x04))\n      shr(0xe0, calldataload(0x00))\n      dup1\n      0x09bd5a60\n      eq\n      tag_3\n      jumpi\n    tag_2:\n      0x00\n      dup1\n      revert\n        /* \"contracts/RPS.sol\":7798:7862  function hash() public {... */\n    tag_3:\n      tag_4\n      tag_5\n      jump\t// in\n    tag_4:\n      stop\n    tag_5:\n      jump\t// out\n\n    auxdata: 0xa26469706673582212208fff5dfd8d99c1668ddd49fbc4ed638b801158d05502cca85e3f7a4b9d26f2da64736f6c63430008070033\n}\n",
+						"bytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "6080604052348015600f57600080fd5b50606d80601d6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c806309bd5a6014602d575b600080fd5b60336035565b005b56fea26469706673582212208fff5dfd8d99c1668ddd49fbc4ed638b801158d05502cca85e3f7a4b9d26f2da64736f6c63430008070033",
+							"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH1 0xF JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x6D DUP1 PUSH1 0x1D PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN INVALID PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH1 0xF JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH1 0x28 JUMPI PUSH1 0x0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x9BD5A60 EQ PUSH1 0x2D JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x33 PUSH1 0x35 JUMP JUMPDEST STOP JUMPDEST JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 DUP16 SELFDESTRUCT 0x5D REVERT DUP14 SWAP10 0xC1 PUSH7 0x8DDD49FBC4ED63 DUP12 DUP1 GT PC 0xD0 SSTORE MUL 0xCC 0xA8 0x5E EXTCODEHASH PUSH27 0x4B9D26F2DA64736F6C634300080700330000000000000000000000 ",
+							"sourceMap": "59:7805:0:-:0;;;;;;;;;;;;;;;;;;;"
+						},
+						"deployedBytecode": {
+							"functionDebugData": {
+								"@hash_9": {
+									"entryPoint": 53,
+									"id": 9,
+									"parameterSlots": 0,
+									"returnSlots": 0
+								}
+							},
+							"generatedSources": [],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "6080604052348015600f57600080fd5b506004361060285760003560e01c806309bd5a6014602d575b600080fd5b60336035565b005b56fea26469706673582212208fff5dfd8d99c1668ddd49fbc4ed638b801158d05502cca85e3f7a4b9d26f2da64736f6c63430008070033",
+							"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH1 0xF JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH1 0x28 JUMPI PUSH1 0x0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x9BD5A60 EQ PUSH1 0x2D JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x33 PUSH1 0x35 JUMP JUMPDEST STOP JUMPDEST JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 DUP16 SELFDESTRUCT 0x5D REVERT DUP14 SWAP10 0xC1 PUSH7 0x8DDD49FBC4ED63 DUP12 DUP1 GT PC 0xD0 SSTORE MUL 0xCC 0xA8 0x5E EXTCODEHASH PUSH27 0x4B9D26F2DA64736F6C634300080700330000000000000000000000 ",
+							"sourceMap": "59:7805:0:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;7798:64;;;:::i;:::-;;;:::o"
+						},
+						"gasEstimates": {
+							"creation": {
+								"codeDepositCost": "21800",
+								"executionCost": "75",
+								"totalCost": "21875"
+							},
+							"external": {
+								"hash()": "122"
+							}
+						},
+						"legacyAssembly": {
+							".code": [
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH",
+									"source": 0,
+									"value": "80"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH",
+									"source": 0,
+									"value": "40"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "MSTORE",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "CALLVALUE",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "DUP1",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "ISZERO",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH [tag]",
+									"source": 0,
+									"value": "1"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "JUMPI",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "DUP1",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "REVERT",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "tag",
+									"source": 0,
+									"value": "1"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "JUMPDEST",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "POP",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH #[$]",
+									"source": 0,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "DUP1",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH [$]",
+									"source": 0,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "CODECOPY",
+									"source": 0
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 59,
+									"end": 7864,
+									"name": "RETURN",
+									"source": 0
+								}
+							],
+							".data": {
+								"0": {
+									".auxdata": "a26469706673582212208fff5dfd8d99c1668ddd49fbc4ed638b801158d05502cca85e3f7a4b9d26f2da64736f6c63430008070033",
+									".code": [
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "80"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "40"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "MSTORE",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "CALLVALUE",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "ISZERO",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "1"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "JUMPI",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "REVERT",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "tag",
+											"source": 0,
+											"value": "1"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "POP",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "4"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "CALLDATASIZE",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "LT",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "2"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "JUMPI",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "CALLDATALOAD",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "E0"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "SHR",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "9BD5A60"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "EQ",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "3"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "JUMPI",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "tag",
+											"source": 0,
+											"value": "2"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 59,
+											"end": 7864,
+											"name": "REVERT",
+											"source": 0
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "tag",
+											"source": 0,
+											"value": "3"
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "4"
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "5"
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "JUMP",
+											"source": 0,
+											"value": "[in]"
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "tag",
+											"source": 0,
+											"value": "4"
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "STOP",
+											"source": 0
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "tag",
+											"source": 0,
+											"value": "5"
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 7798,
+											"end": 7862,
+											"name": "JUMP",
+											"source": 0,
+											"value": "[out]"
+										}
+									]
+								}
+							}
+						},
+						"methodIdentifiers": {
+							"hash()": "09bd5a60"
+						}
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.7+commit.e28d00a7\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"hash\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/RPS.sol\":\"RPS\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/RPS.sol\":{\"keccak256\":\"0x51d26c0f457944ee35f48e43e2a6e6aa2bbeeab8bf0ac7b0b0f4114e921e9179\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8b96aa69077ccbf134dd00447473f8ef91fd38664a49eebc35f5f235a9bd5740\",\"dweb:/ipfs/QmPrtN6NbhcDr2SsvnGMnkYGcUXrcAwA966ZLp8ppVFo4F\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [],
+						"types": null
+					},
+					"userdoc": {
+						"kind": "user",
+						"methods": {},
+						"version": 1
+					}
+				}
+			}
+		},
+		"errors": [
+			{
+				"component": "general",
+				"errorCode": "6133",
+				"formattedMessage": "Warning: Statement has no effect.\n   --> contracts/RPS.sol:185:9:\n    |\n185 |         keccak256(\"hello world\");\n    |         ^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+				"message": "Statement has no effect.",
+				"severity": "warning",
+				"sourceLocation": {
+					"end": 7855,
+					"file": "contracts/RPS.sol",
+					"start": 7831
+				},
+				"type": "Warning"
+			},
+			{
+				"component": "general",
+				"errorCode": "2018",
+				"formattedMessage": "Warning: Function state mutability can be restricted to pure\n   --> contracts/RPS.sol:184:5:\n    |\n184 |     function hash() public {\n    |     ^ (Relevant source part starts here and spans across multiple lines).\n\n",
+				"message": "Function state mutability can be restricted to pure",
+				"severity": "warning",
+				"sourceLocation": {
+					"end": 7862,
+					"file": "contracts/RPS.sol",
+					"start": 7798
+				},
+				"type": "Warning"
+			}
+		],
+		"sources": {
+			"contracts/RPS.sol": {
+				"ast": {
+					"absolutePath": "contracts/RPS.sol",
+					"exportedSymbols": {
+						"RPS": [
+							10
+						]
+					},
+					"id": 11,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".7"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "34:23:0"
+						},
+						{
+							"abstract": false,
+							"baseContracts": [],
+							"contractDependencies": [],
+							"contractKind": "contract",
+							"fullyImplemented": true,
+							"id": 10,
+							"linearizedBaseContracts": [
+								10
+							],
+							"name": "RPS",
+							"nameLocation": "68:3:0",
+							"nodeType": "ContractDefinition",
+							"nodes": [
+								{
+									"body": {
+										"id": 8,
+										"nodeType": "Block",
+										"src": "7821:41:0",
+										"statements": [
+											{
+												"expression": {
+													"arguments": [
+														{
+															"hexValue": "68656c6c6f20776f726c64",
+															"id": 5,
+															"isConstant": false,
+															"isLValue": false,
+															"isPure": true,
+															"kind": "string",
+															"lValueRequested": false,
+															"nodeType": "Literal",
+															"src": "7841:13:0",
+															"typeDescriptions": {
+																"typeIdentifier": "t_stringliteral_47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
+																"typeString": "literal_string \"hello world\""
+															},
+															"value": "hello world"
+														}
+													],
+													"expression": {
+														"argumentTypes": [
+															{
+																"typeIdentifier": "t_stringliteral_47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
+																"typeString": "literal_string \"hello world\""
+															}
+														],
+														"id": 4,
+														"name": "keccak256",
+														"nodeType": "Identifier",
+														"overloadedDeclarations": [],
+														"referencedDeclaration": 4294967288,
+														"src": "7831:9:0",
+														"typeDescriptions": {
+															"typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+															"typeString": "function (bytes memory) pure returns (bytes32)"
+														}
+													},
+													"id": 6,
+													"isConstant": false,
+													"isLValue": false,
+													"isPure": true,
+													"kind": "functionCall",
+													"lValueRequested": false,
+													"names": [],
+													"nodeType": "FunctionCall",
+													"src": "7831:24:0",
+													"tryCall": false,
+													"typeDescriptions": {
+														"typeIdentifier": "t_bytes32",
+														"typeString": "bytes32"
+													}
+												},
+												"id": 7,
+												"nodeType": "ExpressionStatement",
+												"src": "7831:24:0"
+											}
+										]
+									},
+									"functionSelector": "09bd5a60",
+									"id": 9,
+									"implemented": true,
+									"kind": "function",
+									"modifiers": [],
+									"name": "hash",
+									"nameLocation": "7807:4:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 2,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "7811:2:0"
+									},
+									"returnParameters": {
+										"id": 3,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "7821:0:0"
+									},
+									"scope": 10,
+									"src": "7798:64:0",
+									"stateMutability": "nonpayable",
+									"virtual": false,
+									"visibility": "public"
+								}
+							],
+							"scope": 11,
+							"src": "59:7805:0",
+							"usedErrors": []
+						}
+					],
+					"src": "34:7831:0"
+				},
+				"id": 0
+			}
+		}
+	}
+}

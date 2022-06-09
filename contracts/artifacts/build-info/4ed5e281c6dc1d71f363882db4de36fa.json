@@ -1,0 +1,882 @@
+{
+	"id": "4ed5e281c6dc1d71f363882db4de36fa",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.7",
+	"solcLongVersion": "0.8.7+commit.e28d00a7",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"contracts/RPS.sol": {
+				"content": "//SPDX-License-Identifier: MIT\npragma solidity ^0.8.7;\n\ncontract RPS {\n    constructor() payable {} // 해당 컨트렉트는 송금이 가능함을 명시\n\n    // 가위, 바위, 보 값에 대한 enum\n    enum Hand {\n        rock,\n        paper,\n        scissors\n    }\n\n    // 플레이어의 상태\n    enum PlayerStatus {\n        STATUS_WIN, // 게임을 이김\n        STATUS_LOSE,    // 게임을 짐\n        STATUS_TIE, //\n        STATUS_PENDING\n    }\n\n    // 게임 방의 상태\n    enum GameStatus {\n        STATUS_NOT_STARTED, // 시작하지 않은 상태\n        STATUS_STARTED, // 시작한 상태\n        STATUS_COMPLETE, // 게임이 끝난 상태\n        STATUS_ERROR // 게임이 에러난 상태\n    }\n    struct Player {\n        // 참여한 플레이어의 주소와 베팅금액, 낸 값, 현재 상태를 알기 위한 구조체\n        address payable addr; // 주소\n        uint256 playerBetAmount; // 베팅 금액\n        Hand Hand;\n        PlayerStatus PlayerStatus;\n    }\n\n    struct Game {\n        Player originator; //  방장의 정보\n        Player taker; // 참여자 정보\n        uint256 betAmount; // 총 베팅 금액\n    }\n\n    mapping(uint256 => Game) rooms; //Game 구조체 형식으로 각 방을 만들기 위함\n    uint256 roomLen = 0; // rooms의 키 값, 방이 생성될 때마다 1씩 올라감.\n}\n"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			}
+		}
+	},
+	"output": {
+		"contracts": {
+			"contracts/RPS.sol": {
+				"RPS": {
+					"abi": [
+						{
+							"inputs": [],
+							"stateMutability": "payable",
+							"type": "constructor"
+						}
+					],
+					"devdoc": {
+						"kind": "dev",
+						"methods": {},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "    /* \"contracts/RPS.sol\":56:1350  contract RPS {... */\n  mstore(0x40, 0x80)\n    /* \"contracts/RPS.sol\":1282:1283  0 */\n  0x00\n    /* \"contracts/RPS.sol\":1264:1283  uint256 roomLen = 0 */\n  0x01\n  sstore\n    /* \"contracts/RPS.sol\":56:1350  contract RPS {... */\n  dataSize(sub_0)\n  dup1\n  dataOffset(sub_0)\n  0x00\n  codecopy\n  0x00\n  return\nstop\n\nsub_0: assembly {\n        /* \"contracts/RPS.sol\":56:1350  contract RPS {... */\n      mstore(0x40, 0x80)\n      0x00\n      dup1\n      revert\n\n    auxdata: 0xa2646970667358221220444d7134eff8d18afcf4b8b8c117456ac85898c8c447634f81c591e672f44a8164736f6c63430008070033\n}\n",
+						"bytecode": {
+							"functionDebugData": {
+								"@_5": {
+									"entryPoint": null,
+									"id": 5,
+									"parameterSlots": 0,
+									"returnSlots": 0
+								}
+							},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "60806040526000600155603f8060166000396000f3fe6080604052600080fdfea2646970667358221220444d7134eff8d18afcf4b8b8c117456ac85898c8c447634f81c591e672f44a8164736f6c63430008070033",
+							"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x0 PUSH1 0x1 SSTORE PUSH1 0x3F DUP1 PUSH1 0x16 PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN INVALID PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 DIFFICULTY 0x4D PUSH18 0x34EFF8D18AFCF4B8B8C117456AC85898C8C4 SELFBALANCE PUSH4 0x4F81C591 0xE6 PUSH19 0xF44A8164736F6C634300080700330000000000 ",
+							"sourceMap": "56:1294:0:-:0;;;1282:1;1264:19;;56:1294;;;;;;"
+						},
+						"deployedBytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "6080604052600080fdfea2646970667358221220444d7134eff8d18afcf4b8b8c117456ac85898c8c447634f81c591e672f44a8164736f6c63430008070033",
+							"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 DIFFICULTY 0x4D PUSH18 0x34EFF8D18AFCF4B8B8C117456AC85898C8C4 SELFBALANCE PUSH4 0x4F81C591 0xE6 PUSH19 0xF44A8164736F6C634300080700330000000000 ",
+							"sourceMap": "56:1294:0:-:0;;;;;"
+						},
+						"gasEstimates": {
+							"creation": {
+								"codeDepositCost": "12600",
+								"executionCost": "5048",
+								"totalCost": "17648"
+							}
+						},
+						"legacyAssembly": {
+							".code": [
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "PUSH",
+									"source": 0,
+									"value": "80"
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "PUSH",
+									"source": 0,
+									"value": "40"
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "MSTORE",
+									"source": 0
+								},
+								{
+									"begin": 1282,
+									"end": 1283,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 1264,
+									"end": 1283,
+									"name": "PUSH",
+									"source": 0,
+									"value": "1"
+								},
+								{
+									"begin": 1264,
+									"end": 1283,
+									"name": "SSTORE",
+									"source": 0
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "PUSH #[$]",
+									"source": 0,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "DUP1",
+									"source": 0
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "PUSH [$]",
+									"source": 0,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "CODECOPY",
+									"source": 0
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 56,
+									"end": 1350,
+									"name": "RETURN",
+									"source": 0
+								}
+							],
+							".data": {
+								"0": {
+									".auxdata": "a2646970667358221220444d7134eff8d18afcf4b8b8c117456ac85898c8c447634f81c591e672f44a8164736f6c63430008070033",
+									".code": [
+										{
+											"begin": 56,
+											"end": 1350,
+											"name": "PUSH",
+											"source": 0,
+											"value": "80"
+										},
+										{
+											"begin": 56,
+											"end": 1350,
+											"name": "PUSH",
+											"source": 0,
+											"value": "40"
+										},
+										{
+											"begin": 56,
+											"end": 1350,
+											"name": "MSTORE",
+											"source": 0
+										},
+										{
+											"begin": 56,
+											"end": 1350,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 56,
+											"end": 1350,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 56,
+											"end": 1350,
+											"name": "REVERT",
+											"source": 0
+										}
+									]
+								}
+							}
+						},
+						"methodIdentifiers": {}
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.7+commit.e28d00a7\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"constructor\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/RPS.sol\":\"RPS\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/RPS.sol\":{\"keccak256\":\"0x3275a82d171921f79be80813dcca3d0d81b8a9608b68268f8af3a40da7952394\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f644d49b92702e0fd8539e56e4ea66cfbb3eb8f970a6feed60aca0262754c239\",\"dweb:/ipfs/QmbRe8kBATHrTfJQ2gvevrBhFQw3CJen3Det6352bsUMu1\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [
+							{
+								"astId": 44,
+								"contract": "contracts/RPS.sol:RPS",
+								"label": "rooms",
+								"offset": 0,
+								"slot": "0",
+								"type": "t_mapping(t_uint256,t_struct(Game)39_storage)"
+							},
+							{
+								"astId": 47,
+								"contract": "contracts/RPS.sol:RPS",
+								"label": "roomLen",
+								"offset": 0,
+								"slot": "1",
+								"type": "t_uint256"
+							}
+						],
+						"types": {
+							"t_address_payable": {
+								"encoding": "inplace",
+								"label": "address payable",
+								"numberOfBytes": "20"
+							},
+							"t_enum(Hand)9": {
+								"encoding": "inplace",
+								"label": "enum RPS.Hand",
+								"numberOfBytes": "1"
+							},
+							"t_enum(PlayerStatus)14": {
+								"encoding": "inplace",
+								"label": "enum RPS.PlayerStatus",
+								"numberOfBytes": "1"
+							},
+							"t_mapping(t_uint256,t_struct(Game)39_storage)": {
+								"encoding": "mapping",
+								"key": "t_uint256",
+								"label": "mapping(uint256 => struct RPS.Game)",
+								"numberOfBytes": "32",
+								"value": "t_struct(Game)39_storage"
+							},
+							"t_struct(Game)39_storage": {
+								"encoding": "inplace",
+								"label": "struct RPS.Game",
+								"members": [
+									{
+										"astId": 33,
+										"contract": "contracts/RPS.sol:RPS",
+										"label": "originator",
+										"offset": 0,
+										"slot": "0",
+										"type": "t_struct(Player)30_storage"
+									},
+									{
+										"astId": 36,
+										"contract": "contracts/RPS.sol:RPS",
+										"label": "taker",
+										"offset": 0,
+										"slot": "3",
+										"type": "t_struct(Player)30_storage"
+									},
+									{
+										"astId": 38,
+										"contract": "contracts/RPS.sol:RPS",
+										"label": "betAmount",
+										"offset": 0,
+										"slot": "6",
+										"type": "t_uint256"
+									}
+								],
+								"numberOfBytes": "224"
+							},
+							"t_struct(Player)30_storage": {
+								"encoding": "inplace",
+								"label": "struct RPS.Player",
+								"members": [
+									{
+										"astId": 21,
+										"contract": "contracts/RPS.sol:RPS",
+										"label": "addr",
+										"offset": 0,
+										"slot": "0",
+										"type": "t_address_payable"
+									},
+									{
+										"astId": 23,
+										"contract": "contracts/RPS.sol:RPS",
+										"label": "playerBetAmount",
+										"offset": 0,
+										"slot": "1",
+										"type": "t_uint256"
+									},
+									{
+										"astId": 26,
+										"contract": "contracts/RPS.sol:RPS",
+										"label": "Hand",
+										"offset": 0,
+										"slot": "2",
+										"type": "t_enum(Hand)9"
+									},
+									{
+										"astId": 29,
+										"contract": "contracts/RPS.sol:RPS",
+										"label": "PlayerStatus",
+										"offset": 1,
+										"slot": "2",
+										"type": "t_enum(PlayerStatus)14"
+									}
+								],
+								"numberOfBytes": "96"
+							},
+							"t_uint256": {
+								"encoding": "inplace",
+								"label": "uint256",
+								"numberOfBytes": "32"
+							}
+						}
+					},
+					"userdoc": {
+						"kind": "user",
+						"methods": {},
+						"version": 1
+					}
+				}
+			}
+		},
+		"sources": {
+			"contracts/RPS.sol": {
+				"ast": {
+					"absolutePath": "contracts/RPS.sol",
+					"exportedSymbols": {
+						"RPS": [
+							48
+						]
+					},
+					"id": 49,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".7"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "31:23:0"
+						},
+						{
+							"abstract": false,
+							"baseContracts": [],
+							"contractDependencies": [],
+							"contractKind": "contract",
+							"fullyImplemented": true,
+							"id": 48,
+							"linearizedBaseContracts": [
+								48
+							],
+							"name": "RPS",
+							"nameLocation": "65:3:0",
+							"nodeType": "ContractDefinition",
+							"nodes": [
+								{
+									"body": {
+										"id": 4,
+										"nodeType": "Block",
+										"src": "97:2:0",
+										"statements": []
+									},
+									"id": 5,
+									"implemented": true,
+									"kind": "constructor",
+									"modifiers": [],
+									"name": "",
+									"nameLocation": "-1:-1:-1",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 2,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "86:2:0"
+									},
+									"returnParameters": {
+										"id": 3,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "97:0:0"
+									},
+									"scope": 48,
+									"src": "75:24:0",
+									"stateMutability": "payable",
+									"virtual": false,
+									"visibility": "public"
+								},
+								{
+									"canonicalName": "RPS.Hand",
+									"id": 9,
+									"members": [
+										{
+											"id": 6,
+											"name": "rock",
+											"nameLocation": "227:4:0",
+											"nodeType": "EnumValue",
+											"src": "227:4:0"
+										},
+										{
+											"id": 7,
+											"name": "paper",
+											"nameLocation": "241:5:0",
+											"nodeType": "EnumValue",
+											"src": "241:5:0"
+										},
+										{
+											"id": 8,
+											"name": "scissors",
+											"nameLocation": "256:8:0",
+											"nodeType": "EnumValue",
+											"src": "256:8:0"
+										}
+									],
+									"name": "Hand",
+									"nameLocation": "212:4:0",
+									"nodeType": "EnumDefinition",
+									"src": "207:63:0"
+								},
+								{
+									"canonicalName": "RPS.PlayerStatus",
+									"id": 14,
+									"members": [
+										{
+											"id": 10,
+											"name": "STATUS_WIN",
+											"nameLocation": "334:10:0",
+											"nodeType": "EnumValue",
+											"src": "334:10:0"
+										},
+										{
+											"id": 11,
+											"name": "STATUS_LOSE",
+											"nameLocation": "374:11:0",
+											"nodeType": "EnumValue",
+											"src": "374:11:0"
+										},
+										{
+											"id": 12,
+											"name": "STATUS_TIE",
+											"nameLocation": "415:10:0",
+											"nodeType": "EnumValue",
+											"src": "415:10:0"
+										},
+										{
+											"id": 13,
+											"name": "STATUS_PENDING",
+											"nameLocation": "438:14:0",
+											"nodeType": "EnumValue",
+											"src": "438:14:0"
+										}
+									],
+									"name": "PlayerStatus",
+									"nameLocation": "311:12:0",
+									"nodeType": "EnumDefinition",
+									"src": "306:152:0"
+								},
+								{
+									"canonicalName": "RPS.GameStatus",
+									"id": 19,
+									"members": [
+										{
+											"id": 15,
+											"name": "STATUS_NOT_STARTED",
+											"nameLocation": "518:18:0",
+											"nodeType": "EnumValue",
+											"src": "518:18:0"
+										},
+										{
+											"id": 16,
+											"name": "STATUS_STARTED",
+											"nameLocation": "576:14:0",
+											"nodeType": "EnumValue",
+											"src": "576:14:0"
+										},
+										{
+											"id": 17,
+											"name": "STATUS_COMPLETE",
+											"nameLocation": "620:15:0",
+											"nodeType": "EnumValue",
+											"src": "620:15:0"
+										},
+										{
+											"id": 18,
+											"name": "STATUS_ERROR",
+											"nameLocation": "672:12:0",
+											"nodeType": "EnumValue",
+											"src": "672:12:0"
+										}
+									],
+									"name": "GameStatus",
+									"nameLocation": "497:10:0",
+									"nodeType": "EnumDefinition",
+									"src": "492:228:0"
+								},
+								{
+									"canonicalName": "RPS.Player",
+									"id": 30,
+									"members": [
+										{
+											"constant": false,
+											"id": 21,
+											"mutability": "mutable",
+											"name": "addr",
+											"nameLocation": "876:4:0",
+											"nodeType": "VariableDeclaration",
+											"scope": 30,
+											"src": "860:20:0",
+											"stateVariable": false,
+											"storageLocation": "default",
+											"typeDescriptions": {
+												"typeIdentifier": "t_address_payable",
+												"typeString": "address payable"
+											},
+											"typeName": {
+												"id": 20,
+												"name": "address",
+												"nodeType": "ElementaryTypeName",
+												"src": "860:15:0",
+												"stateMutability": "payable",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address_payable",
+													"typeString": "address payable"
+												}
+											},
+											"visibility": "internal"
+										},
+										{
+											"constant": false,
+											"id": 23,
+											"mutability": "mutable",
+											"name": "playerBetAmount",
+											"nameLocation": "908:15:0",
+											"nodeType": "VariableDeclaration",
+											"scope": 30,
+											"src": "900:23:0",
+											"stateVariable": false,
+											"storageLocation": "default",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											},
+											"typeName": {
+												"id": 22,
+												"name": "uint256",
+												"nodeType": "ElementaryTypeName",
+												"src": "900:7:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"visibility": "internal"
+										},
+										{
+											"constant": false,
+											"id": 26,
+											"mutability": "mutable",
+											"name": "Hand",
+											"nameLocation": "955:4:0",
+											"nodeType": "VariableDeclaration",
+											"scope": 30,
+											"src": "950:9:0",
+											"stateVariable": false,
+											"storageLocation": "default",
+											"typeDescriptions": {
+												"typeIdentifier": "t_enum$_Hand_$9",
+												"typeString": "enum RPS.Hand"
+											},
+											"typeName": {
+												"id": 25,
+												"nodeType": "UserDefinedTypeName",
+												"pathNode": {
+													"id": 24,
+													"name": "Hand",
+													"nodeType": "IdentifierPath",
+													"referencedDeclaration": 9,
+													"src": "950:4:0"
+												},
+												"referencedDeclaration": 9,
+												"src": "950:4:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_enum$_Hand_$9",
+													"typeString": "enum RPS.Hand"
+												}
+											},
+											"visibility": "internal"
+										},
+										{
+											"constant": false,
+											"id": 29,
+											"mutability": "mutable",
+											"name": "PlayerStatus",
+											"nameLocation": "982:12:0",
+											"nodeType": "VariableDeclaration",
+											"scope": 30,
+											"src": "969:25:0",
+											"stateVariable": false,
+											"storageLocation": "default",
+											"typeDescriptions": {
+												"typeIdentifier": "t_enum$_PlayerStatus_$14",
+												"typeString": "enum RPS.PlayerStatus"
+											},
+											"typeName": {
+												"id": 28,
+												"nodeType": "UserDefinedTypeName",
+												"pathNode": {
+													"id": 27,
+													"name": "PlayerStatus",
+													"nodeType": "IdentifierPath",
+													"referencedDeclaration": 14,
+													"src": "969:12:0"
+												},
+												"referencedDeclaration": 14,
+												"src": "969:12:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_enum$_PlayerStatus_$14",
+													"typeString": "enum RPS.PlayerStatus"
+												}
+											},
+											"visibility": "internal"
+										}
+									],
+									"name": "Player",
+									"nameLocation": "732:6:0",
+									"nodeType": "StructDefinition",
+									"scope": 48,
+									"src": "725:276:0",
+									"visibility": "public"
+								},
+								{
+									"canonicalName": "RPS.Game",
+									"id": 39,
+									"members": [
+										{
+											"constant": false,
+											"id": 33,
+											"mutability": "mutable",
+											"name": "originator",
+											"nameLocation": "1036:10:0",
+											"nodeType": "VariableDeclaration",
+											"scope": 39,
+											"src": "1029:17:0",
+											"stateVariable": false,
+											"storageLocation": "default",
+											"typeDescriptions": {
+												"typeIdentifier": "t_struct$_Player_$30_storage_ptr",
+												"typeString": "struct RPS.Player"
+											},
+											"typeName": {
+												"id": 32,
+												"nodeType": "UserDefinedTypeName",
+												"pathNode": {
+													"id": 31,
+													"name": "Player",
+													"nodeType": "IdentifierPath",
+													"referencedDeclaration": 30,
+													"src": "1029:6:0"
+												},
+												"referencedDeclaration": 30,
+												"src": "1029:6:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_struct$_Player_$30_storage_ptr",
+													"typeString": "struct RPS.Player"
+												}
+											},
+											"visibility": "internal"
+										},
+										{
+											"constant": false,
+											"id": 36,
+											"mutability": "mutable",
+											"name": "taker",
+											"nameLocation": "1084:5:0",
+											"nodeType": "VariableDeclaration",
+											"scope": 39,
+											"src": "1077:12:0",
+											"stateVariable": false,
+											"storageLocation": "default",
+											"typeDescriptions": {
+												"typeIdentifier": "t_struct$_Player_$30_storage_ptr",
+												"typeString": "struct RPS.Player"
+											},
+											"typeName": {
+												"id": 35,
+												"nodeType": "UserDefinedTypeName",
+												"pathNode": {
+													"id": 34,
+													"name": "Player",
+													"nodeType": "IdentifierPath",
+													"referencedDeclaration": 30,
+													"src": "1077:6:0"
+												},
+												"referencedDeclaration": 30,
+												"src": "1077:6:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_struct$_Player_$30_storage_ptr",
+													"typeString": "struct RPS.Player"
+												}
+											},
+											"visibility": "internal"
+										},
+										{
+											"constant": false,
+											"id": 38,
+											"mutability": "mutable",
+											"name": "betAmount",
+											"nameLocation": "1127:9:0",
+											"nodeType": "VariableDeclaration",
+											"scope": 39,
+											"src": "1119:17:0",
+											"stateVariable": false,
+											"storageLocation": "default",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											},
+											"typeName": {
+												"id": 37,
+												"name": "uint256",
+												"nodeType": "ElementaryTypeName",
+												"src": "1119:7:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"visibility": "internal"
+										}
+									],
+									"name": "Game",
+									"nameLocation": "1014:4:0",
+									"nodeType": "StructDefinition",
+									"scope": 48,
+									"src": "1007:157:0",
+									"visibility": "public"
+								},
+								{
+									"constant": false,
+									"id": 44,
+									"mutability": "mutable",
+									"name": "rooms",
+									"nameLocation": "1195:5:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 48,
+									"src": "1170:30:0",
+									"stateVariable": true,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_Game_$39_storage_$",
+										"typeString": "mapping(uint256 => struct RPS.Game)"
+									},
+									"typeName": {
+										"id": 43,
+										"keyType": {
+											"id": 40,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "1178:7:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"nodeType": "Mapping",
+										"src": "1170:24:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_Game_$39_storage_$",
+											"typeString": "mapping(uint256 => struct RPS.Game)"
+										},
+										"valueType": {
+											"id": 42,
+											"nodeType": "UserDefinedTypeName",
+											"pathNode": {
+												"id": 41,
+												"name": "Game",
+												"nodeType": "IdentifierPath",
+												"referencedDeclaration": 39,
+												"src": "1189:4:0"
+											},
+											"referencedDeclaration": 39,
+											"src": "1189:4:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_struct$_Game_$39_storage_ptr",
+												"typeString": "struct RPS.Game"
+											}
+										}
+									},
+									"visibility": "internal"
+								},
+								{
+									"constant": false,
+									"id": 47,
+									"mutability": "mutable",
+									"name": "roomLen",
+									"nameLocation": "1272:7:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 48,
+									"src": "1264:19:0",
+									"stateVariable": true,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_uint256",
+										"typeString": "uint256"
+									},
+									"typeName": {
+										"id": 45,
+										"name": "uint256",
+										"nodeType": "ElementaryTypeName",
+										"src": "1264:7:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										}
+									},
+									"value": {
+										"hexValue": "30",
+										"id": 46,
+										"isConstant": false,
+										"isLValue": false,
+										"isPure": true,
+										"kind": "number",
+										"lValueRequested": false,
+										"nodeType": "Literal",
+										"src": "1282:1:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_rational_0_by_1",
+											"typeString": "int_const 0"
+										},
+										"value": "0"
+									},
+									"visibility": "internal"
+								}
+							],
+							"scope": 49,
+							"src": "56:1294:0",
+							"usedErrors": []
+						}
+					],
+					"src": "31:1320:0"
+				},
+				"id": 0
+			}
+		}
+	}
+}
